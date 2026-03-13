@@ -15,16 +15,17 @@ RUN echo "set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936" >> /etc/vim/
 RUN echo "set termencoding=utf-8" >> /etc/vim/vimrc
 RUN echo "set encoding=utf-8" >> /etc/vim/vimrc
 
-# jdk
-ADD https://repo.huaweicloud.com/java/jdk/8u202-b08/jdk-8u202-linux-x64.tar.gz /tmp/
+# jdk 建议下载本地打包，跳过安全认证过期的地址 https://repo.huaweicloud.com/java/jdk/8u202-b08/jdk-8u202-linux-x64.tar.gz 
+ADD jdk-8u202-linux-x64.tar.gz /tmp/
 RUN tar -zxf /tmp/jdk-*.tar.gz -C /opt/ && rm -f /tmp/jdk-*.tar.gz && mv /opt/jdk* /opt/jdk
 
 ENV JAVA_HOME /opt/jdk
 ENV PATH ${JAVA_HOME}/bin:$PATH
 
-# pdf2html-service
+# pdf2html-service  ！！！！需调整gz包名称，部分情况下*错误的
 COPY target/pdf2html-service-*.tar.gz /tmp/
-RUN tar -zxf /tmp/pdf2html-service-*.tar.gz -C /opt/ && rm -f /tmp/pdf2html-service-*.tar.gz
+RUN tar -zxf /tmp/pdf2html-service-1.0.1-20260312.tar.gz -C /opt/ && rm -f /tmp/pdf2html-service-1.0.1-20260312.tar.gz && apt-get update && apt-get install -y dos2unix && dos2unix /opt/pdf2html-service/start.sh
+
 
 ENTRYPOINT [""]
 WORKDIR /opt/pdf2html-service
